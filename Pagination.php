@@ -106,14 +106,16 @@ class Pagination
      */
     public function getPage()
     {
-        // the page was previously set
-        if ($this->page) {
-            return $this->page;
+        // the page wasn't previously set
+        if (!$this->page) {
+            // get the current page from the URI
+            if (preg_match($this->buildPattern(), $this->getUri(), $matches)) {
+                $this->setPage((int) $matches[1]);
+            }
         }
 
-        // get the current page from the URI
-        if (preg_match($this->buildPattern(), $this->getUri(), $matches)) {
-            return (int) $matches[1];
+        if ($this->page) {
+            return min($this->page, $this->getTotalPages());
         }
 
         // default page is 1
